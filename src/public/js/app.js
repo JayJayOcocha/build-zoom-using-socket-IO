@@ -1,7 +1,8 @@
 const socket = io();
 
 const welcome = document.getElementById("welcome")
-const form = welcome.querySelector("form");
+const form = welcome.querySelector("#welcome #roomName");
+const form2 = welcome.querySelector("#welcome #name")
 const room = document.getElementById("room");
 
 room.hidden = true;
@@ -27,9 +28,10 @@ function handleMessageSubmit(event){
 }
 function handleNicknameSubmit(event){
     event.preventDefault();
-    const input = room.querySelector("#name input");
-    const value = input.value;
-    socket.emit("nickname", input.value );
+    const nick = form2.querySelector("input")
+    // console.log(nick.value)
+    const value = nick.value;
+    socket.emit("nickname", value );
 }
 
 
@@ -39,30 +41,54 @@ function showRoom(){
     const h3 = room.querySelector("h3");
     h3.innerText = `Room ${roomName}`
     const msgForm = room.querySelector("#msg")
-    const nameForm = room.querySelector("#name")
     msgForm.addEventListener("submit", handleMessageSubmit)
-    nameForm.addEventListener("submit", handleNicknameSubmit)
 }
 
 function handleRoomSubmit(event){
     event.preventDefault();
-    const input = form.querySelector("input");
+
+    const room = form.querySelector("input")
+    console.log(room.value)
+
+    const nick = form2.querySelector("input")
+    console.log(nick.value)
+    // console.log()
+
     socket.emit("enter_room", 
-    input.value,
+    room.value, nick.value,
     showRoom
     )
-    roomName = input.value;
-    input.value = ""
+    roomName = room.value;
+    room.value = ""
 }
 
+form2.addEventListener("submit", handleNicknameSubmit)
 form.addEventListener("submit", handleRoomSubmit)
 
-socket.on("welcome", (user) =>{
+socket.on("welcome", (user, newCount) =>{
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`
     addMessage(`${user} joined!`);
 })
 
-socket.on("bye", (left) =>{
+socket.on("bye", (left, newCount) =>{
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`
     addMessage(`${left} left!`);
 })
 
 socket.on("new_message", addMessage)
+
+socket.on("room_change", (rooms)=>{
+    const roomLists = welcome.querySelector("ul");
+    roomLists.innerHTML = "";
+    if(rooms.length === 0){
+        
+        return;
+    }
+    rooms.forEach((room) =>{
+        const li = document.createElement("li");
+        li.innerText = room;
+        roomLists.append(li);
+    });
+})
