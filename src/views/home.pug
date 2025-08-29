@@ -8,24 +8,33 @@ html(lang="en")
     body 
         header
             h1 Noom
+            h2
         main
-            div#welcome
-            
+            div#nickname
                 form#name
-                    input(type="text" required placeholder="nickname")
+                    input(type="text", required, placeholder="nickname")
                     button Save
-                form#roomName
-                    input(type="text" required placeholder="room name")
+            div#welcome
+                form
+                    input(type="text", required, placeholder="room name")
                     button Enter Room
                 h4 Open Rooms:
-                ul
-
-                
+                ul 
             div#room
-                h3
-                ul  
+                h3 
+                ul
+                //- form#name
+                //-     input(type="text", required, placeholder="nickname")
+                //-     button Save
                 form#msg
-                    input(type="text" required placeholder="message")
+                    input(type="text", required, placeholder="message")
                     button Send
+                
         script(src="/socket.io/socket.io.js")
+        //- websocket은 브라우저에 설치되어 있는 기능이지만
+        //- socket IO는 websocket의 기능이 아니라 
+        //- 부가적으로 설치해야하는 프레임워크 
+        //- 그렇기 때문에 이렇게 따로 
+        //- src를 지정해서 호환이 되도록 해줘야함
+
         script(src="/public/js/app.js")
